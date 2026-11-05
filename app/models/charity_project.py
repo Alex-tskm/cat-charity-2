@@ -10,13 +10,18 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column
 
+from app.constants import (
+    MAX_LENGTH_PROJECT_NAME,
+    MIN_LENGTH_PROJECT_DESCRIPTION,
+    MIN_LENGTH_PROJECT_NAME,
+)
 from app.core.db import Base, CommonMixin
 
 
 class CharityProject(CommonMixin, Base):
     # Уникальное название проекта: от 5 до 100 символов.
     name: Mapped[str] = mapped_column(
-        String(100), unique=True, nullable=False
+        String(MAX_LENGTH_PROJECT_NAME), unique=True, nullable=False
     )
     # Описание проекта: не менее 10 символов.
     description: Mapped[str] = mapped_column(String, nullable=False)
@@ -44,6 +49,16 @@ class CharityProject(CommonMixin, Base):
     # поэтому по умолчанию NULL.
     close_date: Mapped[datetime | None] = mapped_column(DateTime)
 
+    # Отладочный метод: удобно смотреть объект в консоли и логах.
+    def __repr__(self) -> str:
+        return (
+            f'CharityProject(id={self.id}, '
+            f'name={self.name!r}, '
+            f'full_amount={self.full_amount}, '
+            f'invested_amount={self.invested_amount}, '
+            f'fully_invested={self.fully_invested})'
+        )
+
     # Ограничения на уровне БД:
     # — название от 5 до 100 символов;
     # — описание не менее 10 символов;
@@ -51,11 +66,12 @@ class CharityProject(CommonMixin, Base):
     # — собранная сумма не может быть отрицательной.
     __table_args__ = (
         CheckConstraint(
-            'LENGTH(name) BETWEEN 5 AND 100',
+            f'LENGTH(name) BETWEEN {MIN_LENGTH_PROJECT_NAME} '
+            f'AND {MAX_LENGTH_PROJECT_NAME}',
             name='check_name_length',
         ),
         CheckConstraint(
-            'LENGTH(description) >= 10',
+            f'LENGTH(description) >= {MIN_LENGTH_PROJECT_DESCRIPTION}',
             name='check_description_length',
         ),
         CheckConstraint(

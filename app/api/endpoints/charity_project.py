@@ -1,5 +1,6 @@
 # app/api/endpoints/charity_project.py
 from datetime import datetime
+from http import HTTPStatus
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -56,7 +57,7 @@ async def check_name_duplicate(
     )
     if project_id is not None:
         raise HTTPException(
-            status_code=400,  # 400, а не 422 — по спецификации
+            status_code=HTTPStatus.BAD_REQUEST,
             detail='Проект с таким именем уже существует!'
         )
 
@@ -86,7 +87,7 @@ async def update_charity_project(
     )
     if charity_project.fully_invested:
         raise HTTPException(
-            status_code=400,
+            status_code=HTTPStatus.BAD_REQUEST,
             detail='Закрытый проект нельзя редактировать!'
         )
 
@@ -99,9 +100,9 @@ async def update_charity_project(
         and obj_in.full_amount < charity_project.invested_amount
     ):
         raise HTTPException(
-            status_code=400,
+            status_code=HTTPStatus.BAD_REQUEST,
             detail=(
-                'Нелья установить значение full_amount '
+                'Нельзя установить значение full_amount '
                 'меньше уже вложенной суммы.'
             )
         )
@@ -135,7 +136,7 @@ async def delete_charity_project(
     # (или который закрыт — он тоже с вложениями).
     if charity_project.fully_invested or charity_project.invested_amount > 0:
         raise HTTPException(
-            status_code=400,
+            status_code=HTTPStatus.BAD_REQUEST,
             detail='В проект были внесены средства, не подлежит удалению!'
         )
     return await charity_project_crud.remove(charity_project, session)

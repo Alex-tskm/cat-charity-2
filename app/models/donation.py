@@ -44,6 +44,16 @@ class Donation(CommonMixin, Base):
     # Дата полного распределения суммы по проектам.
     close_date: Mapped[datetime | None] = mapped_column(DateTime)
 
+    # Отладочный метод: удобно смотреть объект в консоли и логах.
+    def __repr__(self) -> str:
+        return (
+            f'Donation(id={self.id}, '
+            f'full_amount={self.full_amount}, '
+            f'invested_amount={self.invested_amount}, '
+            f'fully_invested={self.fully_invested}, '
+            f'user_id={self.user_id})'
+        )
+
     __table_args__ = (
         CheckConstraint(
             'full_amount > 0',
