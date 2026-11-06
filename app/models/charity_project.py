@@ -11,6 +11,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.constants import (
+    DEFAULT_INVESTED_AMOUNT,
     MAX_LENGTH_PROJECT_NAME,
     MIN_LENGTH_PROJECT_DESCRIPTION,
     MIN_LENGTH_PROJECT_NAME,
@@ -32,7 +33,7 @@ class CharityProject(CommonMixin, Base):
 
     # Собранная сумма: по умолчанию 0.
     invested_amount: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=0
+        Integer, nullable=False, default=DEFAULT_INVESTED_AMOUNT
     )
 
     # Флаг закрытия проекта: по умолчанию False.

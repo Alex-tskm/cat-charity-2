@@ -11,6 +11,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column
 
+from app.constants import DEFAULT_DONATION_INVESTED_AMOUNT
 from app.core.db import Base, CommonMixin
 
 
@@ -26,7 +27,7 @@ class Donation(CommonMixin, Base):
 
     # Сумма из пожертвования, уже распределённая по проектам: по умолчанию 0.
     invested_amount: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=0
+        Integer, nullable=False, default=DEFAULT_DONATION_INVESTED_AMOUNT
     )
 
     # Флаг: все ли деньги из пожертвования переведены в проекты.
